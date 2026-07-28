@@ -42,7 +42,7 @@ app.listen(PORT, () => {
   console.log(`=========================================`);
   console.log(`🚀 Local dev server running!`);
   console.log(`👉 Main page:     http://localhost:${PORT}/`);
-  console.log(`👉 Registration:  http://localhost:${PORT}/registration.html`);
+  console.log(`👉 Registration:  http://localhost:${PORT}/reg.html`);
   console.log(`👉 Admin:         http://localhost:${PORT}/admin.html`);
   console.log(`=========================================`);
 });
