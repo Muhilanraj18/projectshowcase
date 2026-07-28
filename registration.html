@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Showcase — Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14213D;
+    --ink-2:#1B2C50;
+    --ink-3:#233766;
+    --paper:#EDEFEA;
+    --paper-dim:#D9DCD2;
+    --amber:#F2A93B;
+    --amber-dim:#C98A26;
+    --teal:#2E9E86;
+    --red:#E0655A;
+    --line: rgba(237,240,234,0.14);
+    --text:#EDEFEA;
+    --text-dim: rgba(237,240,234,0.62);
+    --text-faint: rgba(237,240,234,0.38);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--ink);
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(242,169,59,0.08), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(46,158,134,0.08), transparent 40%);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+  }
+  .topbar{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 36px;
+  }
+  .brand{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .link-btn{
+    background:none;
+    border:none;
+    color: var(--text-dim);
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    cursor:pointer;
+    text-decoration: none;
+    padding: 6px 0;
+    transition: color 0.15s ease;
+  }
+  .link-btn:hover{ color: var(--amber); }
+
+  [hidden]{ display:none !important; }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 14px;
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(32px, 5vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+  }
+  .sub{
+    color: var(--text-dim);
+    font-size: 16px;
+    line-height: 1.5;
+    max-width: 46ch;
+    margin: 0 0 32px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 36px;
+    align-items: start;
+  }
+  @media (max-width: 760px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+
+  .field{ margin-bottom: 20px; }
+  .field label{
+    display:block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .field .hint{
+    font-size: 12.5px;
+    color: var(--text-faint);
+    margin-top: 5px;
+  }
+  .field input, .field textarea{
+    width:100%;
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    font-size: 14.5px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .field textarea{ resize: vertical; min-height: 84px; line-height:1.5; }
+  .field input::placeholder, .field textarea::placeholder{ color: var(--text-faint); }
+  .field input:focus, .field textarea:focus{
+    outline: none;
+    border-color: var(--amber);
+    background: var(--ink-3);
+  }
+  .field input:focus-visible, .field textarea:focus-visible{
+    outline: 2px solid var(--amber);
+    outline-offset: 1px;
+  }
+  .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 520px){ .row2{ grid-template-columns: 1fr; } }
+
+  .btn{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 26px;
+    cursor: pointer;
+    transition: transform 0.12s ease, opacity 0.12s ease;
+  }
+  .btn:active{ transform: scale(0.98); }
+  .btn-primary{ background: var(--amber); color: var(--ink); }
+  .btn-primary:hover{ background: #f5b654; }
+  .btn-primary:disabled{ opacity:0.5; cursor: default; }
+  .btn-ghost{ background: transparent; color: var(--text); border: 1px solid var(--line); }
+  .btn-ghost:hover{ border-color: var(--text-dim); }
+
+  .error-msg{
+    font-size: 13px;
+    color: var(--red);
+    margin-top: 14px;
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  /* Badge */
+  .badge-shell{ position: sticky; top: 28px; }
+  .badge{
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: var(--radius);
+    padding: 26px 24px 22px;
+    position: relative;
+    box-shadow: 0 20px 40px -18px rgba(0,0,0,0.5);
+  }
+  .badge-top{
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+  .badge-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber-dim);
+  }
+  .badge-no{
+    font-family:'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+    background: rgba(20,33,61,0.08);
+    padding: 4px 9px;
+    border-radius: 6px;
+  }
+  .badge-name{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.2;
+    margin: 0 0 16px;
+    word-break: break-word;
+  }
+  .perf{
+    border-top: 1.5px dashed rgba(20,33,61,0.25);
+    position: relative;
+    margin: 4px -24px 16px;
+  }
+  .perf::before, .perf::after{
+    content:"";
+    position:absolute;
+    top:-9px;
+    width:18px; height:18px;
+    background: var(--ink);
+    border-radius: 50%;
+  }
+  .perf::before{ left: -9px; }
+  .perf::after{ right: -9px; }
+  .badge-proj-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(20,33,61,0.45);
+    margin-bottom: 5px;
+  }
+  .badge-proj-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 6px;
+    word-break: break-word;
+  }
+  .badge-proj-desc{
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(20,33,61,0.72);
+    word-break: break-word;
+  }
+  .badge-placeholder{ color: rgba(20,33,61,0.32); font-style: italic; }
+  .badge-foot{
+    margin-top: 18px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: rgba(20,33,61,0.4);
+    letter-spacing: 0.06em;
+  }
+
+  /* Success */
+  .success-wrap{ text-align:center; padding: 40px 0 10px; }
+  .success-wrap .badge-shell{ max-width: 360px; margin: 28px auto 0; position:static; }
+  .success-tag{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--teal);
+    background: rgba(46,158,134,0.12);
+    border: 1px solid rgba(46,158,134,0.3);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  .success-actions{ margin-top: 30px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+  @media (prefers-reduced-motion: no-preference){
+    .fade-in{ animation: fadeIn 0.35s ease both; }
+  }
+  @keyframes fadeIn{ from{ opacity:0; transform: translateY(6px);} to{ opacity:1; transform:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">Project Showcase</div>
+  </div>
+
+  <!-- REGISTER VIEW -->
+  <section id="view-register" class="fade-in">
+    <h1>Reserve your spot<br>on the floor.</h1>
+    <p class="sub">Register your project and we'll assign your booth number. Takes about two minutes.</p>
+
+    <div class="grid">
+      <form id="regForm" novalidate>
+        <div class="row2">
+          <div class="field">
+            <label for="f-name">Your name</label>
+            <input type="text" id="f-name" placeholder="Jordan Rivera" required>
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input type="email" id="f-email" placeholder="jordan@example.com" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-title">Project title</label>
+          <input type="text" id="f-title" placeholder="e.g. Pocket Weather" required>
+        </div>
+        <div class="field">
+          <label for="f-desc">Project description</label>
+          <textarea id="f-desc" placeholder="One or two sentences. What does it do?" required></textarea>
+        </div>
+        <div class="field">
+          <label for="f-link">Project link</label>
+          <input type="text" id="f-link" placeholder="GitHub, live demo, or docs">
+        </div>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Reserve my spot</button>
+        <div class="error-msg" id="formError" hidden></div>
+      </form>
+
+      <div class="badge-shell">
+        <div class="badge">
+          <div class="badge-top">
+            <span class="badge-eyebrow">Exhibitor Pass</span>
+            <span class="badge-no" id="pv-no">No. —</span>
+          </div>
+          <div class="badge-name" id="pv-name">Your name</div>
+          <div class="perf"></div>
+          <div class="badge-proj-label">Presenting</div>
+          <div class="badge-proj-title" id="pv-title">Project title</div>
+          <div class="badge-proj-desc" id="pv-desc">Your project description will appear here as you type.</div>
+          <div class="badge-foot">SHOWCASE FLOOR · BOOTH ASSIGNED ON SUBMIT</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUCCESS VIEW -->
+  <section id="view-success" class="success-wrap" hidden>
+    <span class="success-tag">✓ You're on the floor plan</span>
+    <h1 id="successHeadline">Booth reserved.</h1>
+    <p class="sub" style="margin:0 auto;">Save your booth number below — organizers will use it to place you on the day.</p>
+    <div class="badge-shell">
+      <div class="badge">
+        <div class="badge-top">
+          <span class="badge-eyebrow">Exhibitor Pass</span>
+          <span class="badge-no" id="sv-no">No. —</span>
+        </div>
+        <div class="badge-name" id="sv-name"></div>
+        <div class="perf"></div>
+        <div class="badge-proj-label">Presenting</div>
+        <div class="badge-proj-title" id="sv-title"></div>
+        <div class="badge-proj-desc" id="sv-desc"></div>
+        <div class="badge-foot">SHOWCASE FLOOR</div>
+      </div>
+    </div>
+    <div class="success-actions">
+      <button class="btn btn-primary" id="registerAnotherBtn">Register someone else</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const views = {
+    register: $('view-register'),
+    success: $('view-success'),
+  };
+
+  function showView(name){
+    Object.values(views).forEach(v => v.hidden = true);
+    views[name].hidden = false;
+    window.scrollTo({top:0, behavior:'auto'});
+  }
+
+  // ---------- Live badge preview ----------
+  const fields = {
+    name: $('f-name'),
+    email: $('f-email'),
+    title: $('f-title'),
+    desc: $('f-desc'),
+    link: $('f-link')
+  };
+
+  function updatePreview(){
+    $('pv-name').textContent = fields.name.value.trim() || 'Your name';
+    $('pv-title').textContent = fields.title.value.trim() || 'Project title';
+    const desc = fields.desc.value.trim();
+    $('pv-desc').textContent = desc || 'Your project description will appear here as you type.';
+    $('pv-desc').classList.toggle('badge-placeholder', !desc);
+  }
+  Object.values(fields).forEach(el => el.addEventListener('input', updatePreview));
+
+  // ---------- Submit registration ----------
+  $('regForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const errEl = $('formError');
+    errEl.hidden = true;
+
+    const name = fields.name.value.trim();
+    const email = fields.email.value.trim();
+    const title = fields.title.value.trim();
+    const desc = fields.desc.value.trim();
+    const link = fields.link.value.trim();
+
+    if(!name || !email || !title || !desc){
+      errEl.textContent = 'Fill in your name, email, project title, and description.';
+      errEl.hidden = false;
+      return;
+    }
+
+    const btn = $('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Reserving…';
+
+    const payload = { name, email, project_title: title, project_description: desc, project_link: link };
+
+    try{
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to register.');
+      }
+
+      $('sv-no').textContent = 'No. ' + data.regNumber;
+      $('sv-name').textContent = name;
+      $('sv-title').textContent = title;
+      $('sv-desc').textContent = desc;
+      $('successHeadline').textContent = "Booth " + data.regNumber + " reserved.";
+
+      this.reset();
+      updatePreview();
+      showView('success');
+    }catch(err){
+      errEl.textContent = err.message || "Something didn't save. Check your connection and try again.";
+      errEl.hidden = false;
+    }finally{
+      btn.disabled = false;
+      btn.textContent = 'Reserve my spot';
+    }
+  });
+
+  $('registerAnotherBtn').addEventListener('click', () => showView('register'));
+
+  showView('register');
+})();
+</script>
+</body>
+</html>

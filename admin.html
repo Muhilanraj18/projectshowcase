@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Showcase — Organizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14213D;
+    --ink-2:#1B2C50;
+    --ink-3:#233766;
+    --paper:#EDEFEA;
+    --paper-dim:#D9DCD2;
+    --amber:#F2A93B;
+    --amber-dim:#C98A26;
+    --teal:#2E9E86;
+    --red:#E0655A;
+    --line: rgba(237,240,234,0.14);
+    --text:#EDEFEA;
+    --text-dim: rgba(237,240,234,0.62);
+    --text-faint: rgba(237,240,234,0.38);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--ink);
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(242,169,59,0.08), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(46,158,134,0.08), transparent 40%);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+  }
+  .topbar{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 36px;
+  }
+  .brand{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .link-btn{
+    background:none;
+    border:none;
+    color: var(--text-dim);
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    cursor:pointer;
+    text-decoration: none;
+    padding: 6px 0;
+    transition: color 0.15s ease;
+  }
+  .link-btn:hover{ color: var(--amber); }
+
+  [hidden]{ display:none !important; }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 14px;
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(32px, 5vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+  }
+  .sub{
+    color: var(--text-dim);
+    font-size: 16px;
+    line-height: 1.5;
+    max-width: 46ch;
+    margin: 0 0 32px;
+  }
+
+  .field{ margin-bottom: 20px; }
+  .field input{
+    width:100%;
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    font-size: 14.5px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .field input:focus{
+    outline: none;
+    border-color: var(--amber);
+    background: var(--ink-3);
+  }
+  
+  .btn{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 26px;
+    cursor: pointer;
+    transition: transform 0.12s ease, opacity 0.12s ease;
+  }
+  .btn:active{ transform: scale(0.98); }
+  .btn-primary{ background: var(--amber); color: var(--ink); }
+  .btn-primary:hover{ background: #f5b654; }
+  .btn-primary:disabled{ opacity:0.5; cursor: default; }
+  .btn-ghost{ background: transparent; color: var(--text); border: 1px solid var(--line); }
+  .btn-ghost:hover{ border-color: var(--text-dim); }
+  .btn-danger{ background: transparent; color: var(--red); border: 1px solid rgba(224,101,90,0.4); font-family:'JetBrains Mono',monospace; font-size:12px; padding: 7px 12px; border-radius: 6px; cursor: pointer; }
+  .btn-danger:hover{ background: rgba(224,101,90,0.1); }
+
+  .error-msg{
+    font-size: 13px;
+    color: var(--red);
+    margin-top: 14px;
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  /* Admin login */
+  .admin-login{ max-width: 360px; margin: 60px auto; text-align:center; }
+  .admin-login .field{ text-align:left; }
+
+  /* Admin dashboard */
+  .admin-head{ display:flex; justify-content:space-between; align-items:flex-end; gap: 16px; flex-wrap:wrap; margin-bottom:32px; }
+  .admin-tools{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .search-input{
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    font-size: 13.5px;
+    min-width: 200px;
+  }
+  .search-input:focus{ outline: none; border-color: var(--amber); }
+
+  /* Card Grid (Badge style) */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .badge-card {
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: var(--radius);
+    padding: 22px 20px 18px;
+    position: relative;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+  }
+  .badge-card .badge-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .badge-card .badge-no {
+    font-family:'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--ink);
+    background: rgba(20,33,61,0.08);
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .badge-card .badge-name {
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.2;
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+  .badge-card .perf {
+    border-top: 1.5px dashed rgba(20,33,61,0.25);
+    position: relative;
+    margin: 4px -20px 14px;
+  }
+  .badge-card .perf::before, .badge-card .perf::after {
+    content:"";
+    position:absolute;
+    top:-7px;
+    width:14px; height:14px;
+    background: var(--ink);
+    border-radius: 50%;
+  }
+  .badge-card .perf::before{ left: -7px; }
+  .badge-card .perf::after{ right: -7px; }
+
+  .badge-card .badge-proj-title {
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+  .badge-card .badge-proj-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(20,33,61,0.72);
+    margin-bottom: 12px;
+    flex-grow: 1;
+  }
+  .badge-card .detail-text {
+    font-size: 12px;
+    color: rgba(20,33,61,0.6);
+    margin-bottom: 4px;
+    word-break: break-all;
+  }
+  .badge-card .detail-text a {
+    color: var(--teal);
+    text-decoration: none;
+  }
+  .badge-card .detail-text a:hover {
+    text-decoration: underline;
+  }
+  
+  .badge-card .badge-foot {
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .badge-card .badge-foot .detail-text { margin: 0; }
+
+  .empty-state{
+    text-align:center;
+    padding: 60px 20px;
+    color: var(--text-faint);
+    font-size: 14px;
+  }
+  .spinner-row{ text-align:center; padding: 40px; color: var(--text-faint); font-family:'JetBrains Mono', monospace; font-size: 12.5px; }
+
+  .toast{
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink-3);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 11px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family:'JetBrains Mono', monospace;
+    box-shadow: 0 12px 28px -10px rgba(0,0,0,0.6);
+    z-index: 50;
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .fade-in{ animation: fadeIn 0.35s ease both; }
+  }
+  @keyframes fadeIn{ from{ opacity:0; transform: translateY(6px);} to{ opacity:1; transform:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">Project Showcase</div>
+    <a href="registration.html" class="link-btn">← Back to Registration</a>
+  </div>
+
+  <!-- ADMIN LOGIN VIEW -->
+  <section id="view-admin-login" class="admin-login fade-in">
+    <p class="eyebrow">Organizer access</p>
+    <h1 style="font-size:36px;">Enter passcode</h1>
+    <div class="field">
+      <input type="password" id="passcodeInput" placeholder="Passcode">
+    </div>
+    <button class="btn btn-primary" id="passcodeSubmit" style="width:100%;">View dashboard</button>
+    <div class="error-msg" id="passcodeError" hidden>Wrong passcode or network error. Try again.</div>
+  </section>
+
+  <!-- ADMIN DASHBOARD VIEW -->
+  <section id="view-admin" class="fade-in" hidden>
+    <div class="admin-head">
+      <div>
+        <p class="eyebrow">Organizer dashboard</p>
+        <h1 style="font-size:36px;">All registrations</h1>
+      </div>
+      <div class="admin-tools">
+        <input type="text" class="search-input" id="adminSearch" placeholder="Search name or project…">
+        <button class="btn btn-ghost" id="refreshBtn">Refresh</button>
+        <button class="btn btn-primary" id="exportBtn">Export CSV</button>
+      </div>
+    </div>
+    
+    <div class="spinner-row" id="adminLoading" hidden>Loading registrations…</div>
+    
+    <div id="adminGrid" class="card-grid"></div>
+
+    <div class="empty-state" id="adminEmpty" hidden>No one's registered yet. Once people start reserving spots, they'll show up here.</div>
+  </section>
+
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script>
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const views = {
+    adminLogin: $('view-admin-login'),
+    admin: $('view-admin'),
+  };
+
+  let currentPasscode = '';
+  let allRecords = [];
+
+  function showView(name){
+    Object.values(views).forEach(v => v.hidden = true);
+    views[name].hidden = false;
+    window.scrollTo({top:0, behavior:'auto'});
+  }
+
+  function toast(msg){
+    const t = $('toast');
+    t.textContent = msg;
+    t.hidden = false;
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=>{ t.hidden = true; }, 3200);
+  }
+
+  function escapeHtml(s){
+    return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // ---------- Admin login ----------
+  $('passcodeSubmit').addEventListener('click', attemptLogin);
+  $('passcodeInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') attemptLogin(); });
+
+  async function attemptLogin(){
+    const btn = $('passcodeSubmit');
+    const input = $('passcodeInput').value.trim();
+    if (!input) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Checking...';
+    $('passcodeError').hidden = true;
+
+    try {
+      const res = await fetch('/api/registrations', {
+        headers: { 'Authorization': 'Bearer ' + input }
+      });
+      if (res.ok) {
+        currentPasscode = input;
+        const data = await res.json();
+        allRecords = data;
+        showView('admin');
+        renderGrid(allRecords);
+      } else {
+        $('passcodeError').hidden = false;
+      }
+    } catch (e) {
+      $('passcodeError').hidden = false;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'View dashboard';
+    }
+  }
+
+  // ---------- Admin dashboard ----------
+  async function loadAdminData(){
+    $('adminLoading').hidden = false;
+    $('adminGrid').innerHTML = '';
+    $('adminEmpty').hidden = true;
+
+    try{
+      const res = await fetch('/api/registrations', {
+        headers: { 'Authorization': 'Bearer ' + currentPasscode }
+      });
+      if (res.ok) {
+        allRecords = await res.json();
+        renderGrid(allRecords);
+      } else {
+        toast("Couldn't load registrations. Unauthorized.");
+        showView('adminLogin');
+      }
+    }catch(e){
+      toast("Couldn't load registrations. Network error.");
+    }finally{
+      $('adminLoading').hidden = true;
+    }
+  }
+
+  function renderGrid(records){
+    const grid = $('adminGrid');
+    grid.innerHTML = '';
+    if(records.length === 0){
+      $('adminEmpty').hidden = false;
+      return;
+    }
+    $('adminEmpty').hidden = true;
+
+    records.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'badge-card';
+      
+      const linkHtml = r.project_link 
+        ? `<div class="detail-text">Link: <a href="${escapeHtml(r.project_link)}" target="_blank" rel="noopener">${escapeHtml(r.project_link)}</a></div>` 
+        : '';
+
+      card.innerHTML = `
+        <div class="badge-top">
+          <span class="badge-no">${escapeHtml(r.regNumber)}</span>
+        </div>
+        <div class="badge-name">${escapeHtml(r.name)}</div>
+        <div class="detail-text" style="margin-bottom:12px;">${escapeHtml(r.email)}</div>
+        
+        <div class="perf"></div>
+        
+        <div class="badge-proj-title">${escapeHtml(r.project_title)}</div>
+        <div class="badge-proj-desc">${escapeHtml(r.project_description)}</div>
+        ${linkHtml}
+        
+        <div class="badge-foot">
+          <div class="detail-text">${new Date(r.submitted_at).toLocaleDateString()}</div>
+          <button class="btn-danger" data-id="${r.id}">Delete</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    grid.querySelectorAll('.btn-danger').forEach(btn => {
+      btn.addEventListener('click', () => deleteRecord(btn.getAttribute('data-id')));
+    });
+  }
+
+  async function deleteRecord(id){
+    if(!confirm('Delete this registration? This cannot be undone.')) return;
+    try{
+      const res = await fetch(`/api/delete?id=${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + currentPasscode }
+      });
+      if (res.ok) {
+        toast('Registration deleted.');
+        loadAdminData();
+      } else {
+        toast("Couldn't delete — unauthorized or error.");
+      }
+    }catch(e){
+      toast("Couldn't delete — network error.");
+    }
+  }
+
+  $('refreshBtn').addEventListener('click', loadAdminData);
+
+  $('adminSearch').addEventListener('input', function(){
+    const q = this.value.trim().toLowerCase();
+    if(!q){ renderGrid(allRecords); return; }
+    renderGrid(allRecords.filter(r =>
+      (r.name||'').toLowerCase().includes(q) ||
+      (r.project_title||'').toLowerCase().includes(q) ||
+      (r.email||'').toLowerCase().includes(q)
+    ));
+  });
+
+  $('exportBtn').addEventListener('click', function(){
+    if(allRecords.length === 0){ toast('Nothing to export yet.'); return; }
+    window.location.href = `/api/export?token=${encodeURIComponent(currentPasscode)}`;
+  });
+
+})();
+</script>
+</body>
+</html>
