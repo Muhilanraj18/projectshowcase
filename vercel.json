@@ -1,9 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/register", "destination": "/api/register" },
-    { "source": "/api/registrations", "destination": "/api/registrations" },
-    { "source": "/api/delete", "destination": "/api/delete" },
-    { "source": "/api/export", "destination": "/api/export" },
     { "source": "/registration", "destination": "/registration.html" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/", "destination": "/shadastria-adepti.html" }
