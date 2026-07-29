@@ -412,7 +412,7 @@
     const payload = { name, email, project_title: title, project_description: desc, project_link: link };
 
     try{
-      const response = await fetch('/api/reg', {
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
