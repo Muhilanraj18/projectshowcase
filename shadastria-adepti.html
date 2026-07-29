@@ -90,7 +90,113 @@
   nav a:hover{ color:var(--lavender); }
   nav a:hover::after{ width:100%; }
   .nav-links{ display:flex; }
-  @media (max-width: 780px){ .nav-links{ display:none; } }
+
+  /* ---- Burger button ---- */
+  .burger{
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 0;
+    z-index: 301;
+    flex-shrink: 0;
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+  .burger:hover{
+    border-color: rgba(196,181,253,0.5);
+    background: rgba(139,92,246,0.08);
+  }
+  .burger span{
+    display: block;
+    width: 20px;
+    height: 1.5px;
+    background: var(--lavender);
+    border-radius: 2px;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease,
+                width 0.3s ease;
+    transform-origin: center;
+  }
+  .burger.open span:nth-child(1){ transform: translateY(6.5px) rotate(45deg); }
+  .burger.open span:nth-child(2){ opacity: 0; width: 0; }
+  .burger.open span:nth-child(3){ transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* ---- Mobile nav drawer ---- */
+  .nav-drawer{
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(300px, 82vw);
+    height: 100%;
+    background: rgba(8,11,20,0.97);
+    border-left: 1px solid rgba(139,92,246,0.2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    padding: 90px 32px 40px;
+    gap: 0;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -16px 0 48px rgba(0,0,0,0.6);
+  }
+  .nav-drawer.open{ transform: translateX(0); }
+
+  .nav-drawer-label{
+    font-family: var(--display);
+    font-size: .65rem;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    opacity: .55;
+    margin-bottom: 20px;
+  }
+  .nav-drawer a{
+    color: rgba(229,231,235,0.65);
+    text-decoration: none;
+    font-size: .8rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-family: var(--body);
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(139,92,246,0.12);
+    transition: color 0.25s ease, padding-left 0.25s ease;
+    position: relative;
+  }
+  .nav-drawer a:last-child{ border-bottom: none; }
+  .nav-drawer a:hover{ color: var(--lavender); padding-left: 8px; }
+  .nav-drawer a.highlight{
+    color: var(--violet);
+    font-weight: 500;
+  }
+  .nav-drawer a.highlight:hover{ color: var(--lavender); }
+
+  /* ---- Overlay ---- */
+  .nav-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(5,6,11,0.65);
+    z-index: 299;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+  .nav-overlay.open{ opacity: 1; pointer-events: auto; }
+
+  @media (max-width: 780px){
+    .nav-links{ display: none; }
+    .burger{ display: flex; }
+  }
 
   /* ---------- layout helpers ---------- */
   section{ position:relative; z-index:2; }
@@ -275,7 +381,25 @@
       <li><a href="/reg.html">Showcase</a></li>
     </ul>
   </nav>
+  <!-- Burger button (mobile only) -->
+  <button class="burger" id="burgerBtn" aria-label="Open navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </header>
+
+<!-- Mobile nav overlay -->
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- Mobile nav drawer (slides in from right) -->
+<nav class="nav-drawer" id="navDrawer" aria-hidden="true">
+  <div class="nav-drawer-label">Navigation</div>
+  <a href="#top"   id="d-home">Home</a>
+  <a href="#codex" id="d-codex">Codex</a>
+  <a href="#constellation" id="d-const">Constellation</a>
+  <a href="#legacy" id="d-legacy">Legacy</a>
+  <a href="#contact" id="d-contact">Contact</a>
+  <a href="/reg.html" class="highlight" id="d-showcase">Showcase ✦</a>
+</nav>
 
 <main>
 
@@ -603,6 +727,50 @@ draw();
     anim.setAttribute('repeatCount','indefinite');
     anim.setAttribute('begin', (2+i*0.3)+'s');
     c.appendChild(anim);
+  });
+})();
+</script>
+
+<script>
+/* ---- Burger / Mobile nav ---- */
+(function(){
+  const burgerBtn  = document.getElementById('burgerBtn');
+  const navDrawer  = document.getElementById('navDrawer');
+  const navOverlay = document.getElementById('navOverlay');
+
+  function openMenu(){
+    burgerBtn.classList.add('open');
+    navDrawer.classList.add('open');
+    navOverlay.classList.add('open');
+    burgerBtn.setAttribute('aria-expanded', 'true');
+    navDrawer.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu(){
+    burgerBtn.classList.remove('open');
+    navDrawer.classList.remove('open');
+    navOverlay.classList.remove('open');
+    burgerBtn.setAttribute('aria-expanded', 'false');
+    navDrawer.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  burgerBtn.addEventListener('click', () => {
+    burgerBtn.classList.contains('open') ? closeMenu() : openMenu();
+  });
+
+  // Close when clicking the overlay
+  navOverlay.addEventListener('click', closeMenu);
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  // Close when a drawer link is clicked (for same-page anchors)
+  navDrawer.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMenu);
   });
 })();
 </script>
