@@ -1,8 +1,14 @@
 {
   "version": 2,
   "routes": [
+    { "src": "/api/register", "dest": "/api/register.js" },
+    { "src": "/api/registrations", "dest": "/api/registrations.js" },
+    { "src": "/api/delete", "dest": "/api/delete.js" },
+    { "src": "/api/export", "dest": "/api/export.js" },
     { "src": "/registration", "dest": "/reg.html" },
     { "src": "/admin", "dest": "/admin.html" },
-    { "src": "/", "dest": "/shadastria-adepti.html" }
+    { "src": "/", "dest": "/shadastria-adepti.html" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
+
