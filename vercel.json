@@ -1,7 +1,6 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/registration", "destination": "/reg.html" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/", "destination": "/shadastria-adepti.html" }
   ]
