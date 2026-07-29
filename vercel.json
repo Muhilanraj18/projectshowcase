@@ -1,7 +1,16 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/", "destination": "/shadastria-adepti.html" }
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "*.html", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/register", "dest": "/api/register.js" },
+    { "src": "/api/registrations", "dest": "/api/registrations.js" },
+    { "src": "/api/delete", "dest": "/api/delete.js" },
+    { "src": "/api/export", "dest": "/api/export.js" },
+    { "src": "/reg.html", "dest": "/reg.html" },
+    { "src": "/admin.html", "dest": "/admin.html" },
+    { "src": "/", "dest": "/shadastria-adepti.html" }
   ]
 }
