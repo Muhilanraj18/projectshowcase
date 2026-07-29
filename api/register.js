@@ -1,4 +1,4 @@
-const { createClient } = require('@libsql/client');
+const { createClient } = require('@libsql/client/http');
 
 // Basic in-memory rate limiting (per instance)
 const rateLimitMap = new Map();
