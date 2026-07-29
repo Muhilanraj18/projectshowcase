@@ -40,11 +40,14 @@
     margin: 0 auto;
     padding: 28px 20px 80px;
   }
+  /* ---- Topbar ---- */
   .topbar{
     display:flex;
     justify-content: space-between;
     align-items:center;
     margin-bottom: 36px;
+    position: relative;
+    z-index: 10;
   }
   .brand{
     font-family:'JetBrains Mono', monospace;
@@ -66,6 +69,88 @@
     transition: color 0.15s ease;
   }
   .link-btn:hover{ color: var(--amber); }
+
+  /* ---- Burger button ---- */
+  .burger{
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 38px;
+    height: 38px;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0;
+    z-index: 201;
+    flex-shrink: 0;
+  }
+  .burger span{
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--text-dim);
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+    transform-origin: center;
+  }
+  .burger.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+  .burger.open span:nth-child(2){ opacity: 0; width: 0; }
+  .burger.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+  /* ---- Mobile nav drawer ---- */
+  .nav-drawer{
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(280px, 80vw);
+    height: 100%;
+    background: var(--ink-2);
+    border-left: 1px solid var(--line);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 28px 40px;
+    gap: 10px;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -12px 0 40px rgba(0,0,0,0.4);
+  }
+  .nav-drawer.open{ transform: translateX(0); }
+  .nav-drawer a{
+    color: var(--text-dim);
+    font-family:'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    transition: color 0.15s ease;
+  }
+  .nav-drawer a:hover{ color: var(--amber); }
+  .nav-drawer-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 6px;
+  }
+
+  /* ---- Overlay ---- */
+  .nav-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 199;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    backdrop-filter: blur(2px);
+  }
+  .nav-overlay.open{ opacity: 1; pointer-events: auto; }
 
   [hidden]{ display:none !important; }
 
@@ -161,6 +246,20 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 24px;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 640px){
+    .wrap{ padding: 20px 16px 60px; }
+    .burger{ display: flex; }
+    .desktop-nav{ display: none; }
+
+    .admin-head{ flex-direction: column; align-items: flex-start; }
+    .admin-tools{ width: 100%; flex-direction: column; align-items: stretch; }
+    .search-input{ min-width: unset; width: 100%; }
+    .admin-tools .btn{ width: 100%; text-align: center; }
+
+    .card-grid{ grid-template-columns: 1fr; gap: 16px; }
   }
 
   .badge-card {
@@ -282,8 +381,22 @@
 
   <div class="topbar">
     <div class="brand">Project Showcase</div>
-    <a href="/reg.html" class="link-btn">← Back to Registration</a>
+    <!-- desktop nav link -->
+    <a href="/reg.html" class="link-btn desktop-nav">← Back to Registration</a>
+    <!-- burger button (mobile only) -->
+    <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+
+  <!-- Mobile nav overlay -->
+  <div class="nav-overlay" id="navOverlay"></div>
+
+  <!-- Mobile nav drawer (slides from right) -->
+  <nav class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <div class="nav-drawer-label">Navigation</div>
+    <a href="/reg.html">← Back to Registration</a>
+  </nav>
 
   <!-- ADMIN LOGIN VIEW -->
   <section id="view-admin-login" class="admin-login fade-in">
@@ -484,6 +597,40 @@
   $('exportBtn').addEventListener('click', function(){
     if(allRecords.length === 0){ toast('Nothing to export yet.'); return; }
     window.location.href = `/api/export?token=${encodeURIComponent(currentPasscode)}`;
+  });
+
+  // ---------- Burger menu ----------
+  const burgerBtn = $('burgerBtn');
+  const navDrawer = $('navDrawer');
+  const navOverlay = $('navOverlay');
+
+  function openMenu(){
+    burgerBtn.classList.add('open');
+    navDrawer.classList.add('open');
+    navOverlay.classList.add('open');
+    burgerBtn.setAttribute('aria-expanded', 'true');
+    navDrawer.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu(){
+    burgerBtn.classList.remove('open');
+    navDrawer.classList.remove('open');
+    navOverlay.classList.remove('open');
+    burgerBtn.setAttribute('aria-expanded', 'false');
+    navDrawer.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  burgerBtn.addEventListener('click', () => {
+    burgerBtn.classList.contains('open') ? closeMenu() : openMenu();
+  });
+
+  navOverlay.addEventListener('click', closeMenu);
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
   });
 
 })();
