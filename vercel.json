@@ -7,13 +7,15 @@
     { "src": "api/register.js", "use": "@vercel/node" },
     { "src": "api/registrations.js", "use": "@vercel/node" },
     { "src": "api/delete.js", "use": "@vercel/node" },
-    { "src": "api/export.js", "use": "@vercel/node" }
+    { "src": "api/export.js", "use": "@vercel/node" },
+    { "src": "api/init.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/api/register", "dest": "/api/register.js" },
     { "src": "/api/registrations", "dest": "/api/registrations.js" },
     { "src": "/api/delete", "dest": "/api/delete.js" },
     { "src": "/api/export", "dest": "/api/export.js" },
+    { "src": "/api/init", "dest": "/api/init.js" },
     { "src": "/reg.html", "dest": "/reg.html" },
     { "src": "/admin.html", "dest": "/admin.html" },
     { "src": "/", "dest": "/shadastria-adepti.html" }
