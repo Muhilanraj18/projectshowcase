@@ -1,4 +1,4 @@
-const { createClient } = require('@libsql/client/http');
+const { createClient } = require('@libsql/client');
 
 module.exports = async function(req, res) {
   // CORS headers
@@ -26,8 +26,9 @@ module.exports = async function(req, res) {
     return res.status(400).json({ error: 'ID is required' });
   }
 
-  const url = process.env.TURSO_DATABASE_URL;
+  const rawUrl = process.env.TURSO_DATABASE_URL;
   const authToken = process.env.TURSO_AUTH_TOKEN;
+  const url = rawUrl ? rawUrl.replace('libsql://', 'https://') : rawUrl;
 
   if (!url || !authToken) {
     return res.status(500).json({ error: 'Database configuration missing.' });

@@ -1,4 +1,4 @@
-const { createClient } = require('@libsql/client/http');
+const { createClient } = require('@libsql/client');
 
 // Basic in-memory rate limiting (per instance)
 const rateLimitMap = new Map();
@@ -51,8 +51,9 @@ module.exports = async function(req, res) {
   const sDesc = sanitize(project_description);
   const sLink = project_link ? sanitize(project_link) : null;
 
-  const url = process.env.TURSO_DATABASE_URL;
+  const rawUrl = process.env.TURSO_DATABASE_URL;
   const authToken = process.env.TURSO_AUTH_TOKEN;
+  const url = rawUrl ? rawUrl.replace('libsql://', 'https://') : rawUrl;
 
   if (!url || !authToken) {
     return res.status(500).json({ error: 'Database configuration missing.' });
