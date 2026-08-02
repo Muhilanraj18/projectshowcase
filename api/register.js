@@ -36,10 +36,10 @@ module.exports = async function(req, res) {
     return res.status(429).json({ error: 'Too many requests, please try again later.' });
   }
 
-  const { name, email, phone, project_title, project_description, project_link } = req.body;
+  const { name, email, project_title, project_description, project_link } = req.body;
 
-  if (!name || !email || !phone || !project_title || !project_description) {
-    return res.status(400).json({ error: 'Name, email, phone, project title, and description are required.' });
+  if (!name || !email || !project_title || !project_description) {
+    return res.status(400).json({ error: 'Name, email, project title, and description are required.' });
   }
 
   // Validate email format
@@ -48,19 +48,11 @@ module.exports = async function(req, res) {
     return res.status(400).json({ error: 'Invalid email address format.' });
   }
 
-  // Validate phone format (10-15 digits, optional leading +)
-  const phoneClean = String(phone).replace(/[\s\-()]/g, '');
-  const phoneRegex = /^[+]?[0-9]{10,15}$/;
-  if (!phoneRegex.test(phoneClean)) {
-    return res.status(400).json({ error: 'Invalid phone number. Please enter a valid 10-digit number.' });
-  }
-
   // Basic sanitization
   const sanitize = (str) => String(str || '').trim().replace(/</g, "&lt;").replace(/>/g, "&gt;");
   
   const sName = sanitize(name);
   const sEmail = sanitize(email).toLowerCase();
-  const sPhone = sanitize(phoneClean);
   const sTitle = sanitize(project_title);
   const sDesc = sanitize(project_description);
   const sLink = project_link ? sanitize(project_link) : null;
@@ -88,9 +80,9 @@ module.exports = async function(req, res) {
 
     // Insert new registration
     const result = await client.execute({
-      sql: `INSERT INTO registrations (name, email, phone, project_title, project_description, project_link) 
-            VALUES (?, ?, ?, ?, ?, ?)`,
-      args: [sName, sEmail, sPhone, sTitle, sDesc, sLink]
+      sql: `INSERT INTO registrations (name, email, project_title, project_description, project_link) 
+            VALUES (?, ?, ?, ?, ?)`,
+      args: [sName, sEmail, sTitle, sDesc, sLink]
     });
 
     const insertedId = result.lastInsertRowid.toString();
