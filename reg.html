@@ -293,8 +293,8 @@
           </div>
           <div class="field">
             <label for="f-email">Email</label>
-            <input type="email" id="f-email" placeholder="jordan@example.com" required>
-            <div class="field-error" id="err-email" hidden style="font-size:12px;color:var(--red);margin-top:4px;">Enter a valid email (e.g. name@domain.com)</div>
+            <input type="email" id="f-email" placeholder="yourname@gmail.com" required>
+            <div class="field-error" id="err-email" hidden style="font-size:12px;color:var(--red);margin-top:4px;">Only @gmail.com addresses are allowed (e.g. yourname@gmail.com)</div>
           </div>
         </div>
 
@@ -380,11 +380,9 @@
     link: $('f-link')
   };
 
-  // Validation helpers
-  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
-
+  // Validation helpers — only @gmail.com is accepted
   function validateEmail(val) {
-    return emailRegex.test(val.trim());
+    return /^[a-zA-Z0-9._%+\-]+@gmail\.com$/i.test(val.trim());
   }
 
   // Inline field validation on blur
@@ -429,7 +427,7 @@
 
     if(!validateEmail(email)){
       $('err-email').hidden = false;
-      errEl.textContent = 'Please enter a valid email address (e.g. name@domain.com).';
+      errEl.textContent = 'Only @gmail.com addresses are allowed. Please use your Gmail account.';
       errEl.hidden = false;
       fields.email.focus();
       return;
