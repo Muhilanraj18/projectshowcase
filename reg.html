@@ -294,6 +294,17 @@
           <div class="field">
             <label for="f-email">Email</label>
             <input type="email" id="f-email" placeholder="jordan@example.com" required>
+            <div class="field-error" id="err-email" hidden style="font-size:12px;color:var(--red);margin-top:4px;">Enter a valid email (e.g. name@domain.com)</div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="f-phone">Phone number</label>
+            <input type="tel" id="f-phone" placeholder="e.g. 9876543210" required maxlength="15">
+            <div class="field-error" id="err-phone" hidden style="font-size:12px;color:var(--red);margin-top:4px;">Enter a valid 10-digit phone number</div>
+          </div>
+          <div class="field">
+            <!-- spacer -->
           </div>
         </div>
         <div class="field">
@@ -373,10 +384,47 @@
   const fields = {
     name: $('f-name'),
     email: $('f-email'),
+    phone: $('f-phone'),
     title: $('f-title'),
     desc: $('f-desc'),
     link: $('f-link')
   };
+
+  // Validation helpers
+  const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  const phoneRegex = /^[+]?[0-9]{10,15}$/;
+
+  function validateEmail(val) {
+    return emailRegex.test(val.trim());
+  }
+  function validatePhone(val) {
+    return phoneRegex.test(val.trim().replace(/[\s\-()]/g, ''));
+  }
+
+  // Inline field validation on blur
+  fields.email.addEventListener('blur', function() {
+    const errEl = $('err-email');
+    if (this.value.trim() && !validateEmail(this.value)) {
+      errEl.hidden = false;
+    } else {
+      errEl.hidden = true;
+    }
+  });
+  fields.email.addEventListener('input', function() {
+    if (validateEmail(this.value)) $('err-email').hidden = true;
+  });
+
+  fields.phone.addEventListener('blur', function() {
+    const errEl = $('err-phone');
+    if (this.value.trim() && !validatePhone(this.value)) {
+      errEl.hidden = false;
+    } else {
+      errEl.hidden = true;
+    }
+  });
+  fields.phone.addEventListener('input', function() {
+    if (validatePhone(this.value)) $('err-phone').hidden = true;
+  });
 
   function updatePreview(){
     $('pv-name').textContent = fields.name.value.trim() || 'Your name';
@@ -395,13 +443,30 @@
 
     const name = fields.name.value.trim();
     const email = fields.email.value.trim();
+    const phone = fields.phone.value.trim().replace(/[\s\-()]/g, '');
     const title = fields.title.value.trim();
     const desc = fields.desc.value.trim();
     const link = fields.link.value.trim();
 
-    if(!name || !email || !title || !desc){
-      errEl.textContent = 'Fill in your name, email, project title, and description.';
+    if(!name || !email || !phone || !title || !desc){
+      errEl.textContent = 'Fill in all required fields: name, email, phone, project title, and description.';
       errEl.hidden = false;
+      return;
+    }
+
+    if(!validateEmail(email)){
+      $('err-email').hidden = false;
+      errEl.textContent = 'Please enter a valid email address (e.g. name@domain.com).';
+      errEl.hidden = false;
+      fields.email.focus();
+      return;
+    }
+
+    if(!validatePhone(phone)){
+      $('err-phone').hidden = false;
+      errEl.textContent = 'Please enter a valid phone number (10 digits).';
+      errEl.hidden = false;
+      fields.phone.focus();
       return;
     }
 
@@ -409,7 +474,7 @@
     btn.disabled = true;
     btn.textContent = 'Reserving…';
 
-    const payload = { name, email, project_title: title, project_description: desc, project_link: link };
+    const payload = { name, email, phone, project_title: title, project_description: desc, project_link: link };
 
     try{
       const response = await fetch('/api/register', {

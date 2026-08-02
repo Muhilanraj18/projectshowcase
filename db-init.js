@@ -12,6 +12,7 @@ async function recreateDb() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
+        phone TEXT,
         project_title TEXT NOT NULL,
         project_description TEXT NOT NULL,
         project_link TEXT,
