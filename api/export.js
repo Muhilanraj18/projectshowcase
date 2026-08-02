@@ -1,4 +1,4 @@
-const { createClient } = require('@libsql/client/http');
+const { createClient } = require('@libsql/client');
 
 module.exports = async function(req, res) {
   // CORS headers
